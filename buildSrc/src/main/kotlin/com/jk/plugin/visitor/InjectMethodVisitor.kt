@@ -6,7 +6,7 @@ import org.objectweb.asm.Type
 import org.objectweb.asm.commons.AdviceAdapter
 import org.objectweb.asm.commons.Method
 
-class InjectMethodVisitor(api: Int, methodVisitor: MethodVisitor, access: Int, name: String?, val descriptor: String?) :
+class InjectMethodVisitor(api: Int, methodVisitor: MethodVisitor, access: Int, name: String?, private val descriptor: String?) :
     AdviceAdapter(api, methodVisitor, access, name, descriptor) {
 
     var flag = false
@@ -15,8 +15,8 @@ class InjectMethodVisitor(api: Int, methodVisitor: MethodVisitor, access: Int, n
         super.onMethodEnter()
         println("name:$name    descriptor:$descriptor")
         if (!flag) return
-//            INVOKESTATIC java/lang/System.currentTimeMillis ()J
-//            LSTORE 1
+        //    INVOKESTATIC java/lang/System.currentTimeMillis ()J
+        //    LSTORE 1
         invokeStatic(Type.getType("Ljava/lang/System;"), Method("currentTimeMillis", "()J"))
         startTime = newLocal(Type.LONG_TYPE)
         storeLocal(startTime)
@@ -39,7 +39,7 @@ class InjectMethodVisitor(api: Int, methodVisitor: MethodVisitor, access: Int, n
         //    INVOKESPECIAL java/lang/StringBuilder.<init> ()V
         invokeConstructor(Type.getType("Ljava/lang/StringBuilder;"), Method("<init>", "()V"))
         //    LDC "total time\uff1a"
-        visitLdcInsn("total time\uff1a")
+        visitLdcInsn("method '$name' total duration\uff1a")
 
         //    INVOKEVIRTUAL java/lang/StringBuilder.append (Ljava/lang/String;)Ljava/lang/StringBuilder;
         invokeVirtual(Type.getType("Ljava/lang/StringBuilder;"), Method("append", "(Ljava/lang/String;)Ljava/lang/StringBuilder;"))
@@ -58,9 +58,7 @@ class InjectMethodVisitor(api: Int, methodVisitor: MethodVisitor, access: Int, n
     }
 
     override fun visitAnnotation(descriptor: String?, visible: Boolean): AnnotationVisitor {
-        if (descriptor?.contains("Lcom/jk/asmdemo/AsmInject;") == true) {
-            flag = true
-        }
+        flag = descriptor?.contains("Lcom/jk/asmdemo/AsmInject;") == true
         return super.visitAnnotation(descriptor, visible)
     }
 }

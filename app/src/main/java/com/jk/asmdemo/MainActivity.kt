@@ -12,10 +12,17 @@ class MainActivity : AppCompatActivity() {
         findViewById<View>(R.id.button).setOnClickListener {
             test()
         }
+        findViewById<View>(R.id.button1).setOnClickListener {
+            test1()
+        }
     }
 
     @AsmInject
     fun test() {
         Thread.sleep(2000)
+    }
+
+    fun test1() {
+
     }
 }
