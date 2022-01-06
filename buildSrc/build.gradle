@@ -1,0 +1,23 @@
+buildscript {
+    ext {
+        kotlinVersion = "1.5.10"
+    }
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+    }
+}
+apply plugin: 'kotlin'
+
+dependencies {
+    implementation gradleApi()
+    implementation "com.android.tools.build:gradle:4.2.2"
+}
+repositories {
+    google()
+    mavenCentral()
+}
+
